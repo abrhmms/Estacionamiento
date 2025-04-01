@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import parkingImage from "../assets/SMART-Parking.png";
+import { NavLink } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
@@ -40,10 +41,13 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.5 }}
-            href="parking.html"
             className="inline-block px-6 py-3 md:px-8 md:py-3 rounded-full text-white font-semibold tracking-wider bg-gradient-to-r from-[#1743e3] to-[#0a1f6d] shadow-lg shadow-[#1743e3]/50 relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px] hover:shadow-[#1743e3]/80 z-[1] group"
           >
-            Reserva tu Lugar
+            <NavLink
+              to="/ParkingManager"
+            >
+              Reserva tu Lugar
+            </NavLink>
             <span className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-all duration-500 group-hover:left-[100%] z-[-1]"></span>
           </motion.a>
         </motion.div>

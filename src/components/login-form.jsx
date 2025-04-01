@@ -1,113 +1,148 @@
-import { GalleryVerticalEnd } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from "react";
+import { GalleryVerticalEnd } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NavLink, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-export function LoginForm({ className, ...props }) {
+export default function LoginForm({ className, ...props }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // 1. Iniciar sesión con Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // 2. Obtener el rol desde Firestore
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+      const userRole = userDoc.data()?.role || "user";
+
+      // 3. Redirigir según el rol
+      if (userRole === "admin") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
+
+    } catch (error) {
+      setError(error.message);
+      console.error("Error al iniciar sesión:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className={cn("min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4", className)} {...props}>
-      <div className="w-full max-w-md rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-glass)] p-8 shadow-lg backdrop-blur-sm">
-        <form className="space-y-6">
-          {/* Logo y título */}
-          <div className="flex flex-col items-center space-y-4 text-center">
-            <a href="#" className="group flex flex-col items-center">
-              <div className="flex size-12 items-center justify-center rounded-lg bg-[var(--color-card-bg)] p-2 group-hover:bg-[var(--color-primary)] transition-colors">
-                <GalleryVerticalEnd className="size-6 text-[var(--color-accent)]" />
+    <div className={cn("relative min-h-screen bg-[var(--color-bg)] overflow-hidden", className)} {...props}>
+      <div className="h-screen overflow-y-auto scrollbar-hidden pt-32 pb-8 px-4">
+        <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
+          <div className="w-full max-w-md rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-glass)] p-8 shadow-lg backdrop-blur-sm">
+            
+            <form onSubmit={handleLogin} className="space-y-6">
+              {/* Logo y título */}
+              <div className="flex flex-col items-center space-y-4 text-center">
+                <a href="#" className="group flex flex-col items-center">
+                  <div className="flex size-12 items-center justify-center rounded-lg bg-[var(--color-card-bg)] p-2 group-hover:bg-[var(--color-primary)] transition-colors">
+                    <GalleryVerticalEnd className="size-6 text-[var(--color-accent)]" />
+                  </div>
+                  <span className="sr-only">SmartPark</span>
+                </a>
+                <h1 className="text-2xl font-bold text-[var(--color-text)]">Iniciar Sesión</h1>
+                <NavLink to="/register" className="text-sm text-[var(--color-text)] opacity-80">
+                  ¿No tienes cuenta?{' '}
+                  <span className="text-[var(--color-accent)] underline underline-offset-4 hover:text-[var(--color-primary)] transition-colors">
+                    Regístrate
+                  </span>
+                </NavLink>
               </div>
-              <span className="sr-only">SmartPark</span>
-            </a>
-            <h1 className="text-2xl font-bold text-[var(--color-text)]">Bienvenido a SmartPark</h1>
-            <p className="text-sm text-[var(--color-text)] opacity-80">
-              ¿No tienes cuenta?{' '}
-              <a href="#" className="py-3 text-[var(--color-accent)] underline underline-offset-4 hover:text-[var(--color-primary)] transition-colors">
-                ¡Registrate!
-              </a>
-            </p>
+
+              {/* Campos del formulario */}
+              <div className="space-y-4">
+                {error && (
+                  <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">
+                    {error}
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@ejemplo.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-[var(--color-glass)] border-[var(--color-glass-border)]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-[var(--color-glass)] border-[var(--color-glass-border)]"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full gradient-bg hover:gradient-bg2"
+                >
+                  {loading ? "Cargando..." : "Iniciar Sesión"}
+                </Button>
+              </div>
+
+              {/* Opciones adicionales */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember"
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-[var(--color-glass-border)]"
+                  />
+                  <Label htmlFor="remember" className="ml-2">
+                    Recuérdame
+                  </Label>
+                </div>
+                <NavLink 
+                  to="/forgot-password" 
+                  className="text-sm text-[var(--color-accent)] hover:underline"
+                >
+                  ¿Olvidaste tu contraseña?
+                </NavLink>
+              </div>
+            </form>
+
+            {/* Footer */}
+            <div className="mt-8 text-center text-xs text-[var(--color-text)]/60">
+              Al iniciar sesión, aceptas nuestros{' '}
+              <a href="#" className="underline hover:text-[var(--color-accent)]">
+                Términos de Servicio
+              </a>.
+            </div>
           </div>
-
-          {/* Formulario */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-[var(--color-text)]" htmlFor="email">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@ejemplo.com"
-                required
-                className="bg-[var(--color-glass)] border-[var(--color-glass-border)] text-[var(--color-text)] placeholder:text-[var(--color-text)]/50 focus:ring-2 focus:ring-[var(--color-accent)]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[var(--color-text)]" htmlFor="password">
-                Contraseña
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="*************"
-                required
-                className="bg-[var(--color-glass)] border-[var(--color-glass-border)] text-[var(--color-text)] placeholder:text-[var(--color-text)]/50 focus:ring-2 focus:ring-[var(--color-accent)]"
-              />
-            </div>
-            <Button
-              type="submit"
-              className="gradient-bg hover:gradient-bg2 inline-block px-6 py-2 md:px-8 md:py-2 rounded-full text-white font-semibold tracking-wider shadow-lg shadow-[var(--color-primary)]/50 relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px] hover:shadow-[var(--color-primary)]/80 z-[1] group w-full"
-            >
-              <span className="relative z-10">Iniciar Sesión</span>
-              <span className="absolute inset-0 gradient-bg2 opacity-0 group-hover:opacity-80 transition-opacity duration-300"></span>
-            </Button>
-          </div>
-
-          {/* Separador */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[var(--color-glass-border)]" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[var(--color-glass)] px-2 text-[var(--color-text)]/60">
-
-              </span>
-            </div>
-          </div>
-
-          {/* Apartado */}
-          <div className="flex items-center justify-between mt-4 text-sm">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="remember"
-                className="h-4 w-4 rounded border-[var(--color-glass-border)] bg-[var(--color-glass)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-              />
-              <label htmlFor="remember" className="ml-2 text-[var(--color-text)] cursor-pointer hover:text-[var(--color-accent)] transition-colors">
-                Recuérdame
-              </label>
-            </div>
-
-            <a
-              href="#"
-              className="text-[var(--color-text)] hover:text-[var(--color-accent)] underline underline-offset-4 transition-colors"
-            >
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
-
-        </form>
-
-        {/* Footer */}
-        <div className="mt-8 text-center text-xs text-[var(--color-text)]/60">
-          Al usar este servicio, aceptas nuestro{' '}
-          <a href="#" className="underline underline-offset-4 hover:text-[var(--color-accent)]">
-            Reglamento de Estacionamiento
-          </a>{' '}
-          y{' '}
-          <a href="#" className="underline underline-offset-4 hover:text-[var(--color-accent)]">
-            Política de Datos Vehiculares
-          </a>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -12,8 +12,8 @@ const Navbar = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <NavLink 
-              to="/" 
+            <NavLink
+              to="/"
               className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#1743e3] to-[#00f7ff] bg-clip-text text-transparent leading-normal"
             >
               SmartPark
@@ -36,9 +36,8 @@ const Navbar = () => {
               >
                 <NavLink
                   to={item.path}
-                  className={({ isActive }) => 
-                    `text-base lg:text-lg font-medium hover:text-[#00f7ff] transition-colors duration-300 tracking-normal ${
-                      isActive ? "text-[#00f7ff]" : ""
+                  className={({ isActive }) =>
+                    `text-base lg:text-lg font-medium hover:text-[#00f7ff] transition-colors duration-300 tracking-normal ${isActive ? "text-[#00f7ff]" : ""
                     }`
                   }
                 >
@@ -55,9 +54,8 @@ const Navbar = () => {
             transition={{ duration: 0.5, delay: 0.6 }}
           >
             <NavLink
-              to="./components/login-form.jsx"
-              className="px-4 py-2 md:px-6 md:py-2 rounded-md font-medium bg-[#eaeaea] text-[#1a1a2e] hover:bg-[#00f7ff] transition-colors text-sm md:text-base"
-            >
+              to="/login-form"
+              className="inline-block px-4 py-3 md:px-6 md:py-2 rounded-full text-white font-semibold tracking-wider bg-gradient-to-r from-[#1743e3] to-[#0a1f6d] shadow-lg shadow-[#1743e3]/50 relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px] hover:shadow-[#1743e3]/80 z-[1] group"            >
               Iniciar Sesión
             </NavLink>
           </motion.button>

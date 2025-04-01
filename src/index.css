@@ -37,18 +37,15 @@
     box-shadow: 0 10px 20px -3px rgba(23, 67, 227, 0.8);
   }
 
-/* Estilos para el subrayado animado */
 .navbar {
     @apply fixed w-full top-0 z-20 p-4 border-b border-gray-800;
     background-color: var(--navbar);
   }
   
-  /* Contenedor interno */
   .nav-container {
     @apply max-w-screen-xl mx-auto flex items-center;
   }
   
-  /* Items del menú - Versión simplificada */
   .nav-link {
     @apply relative px-4 py-2 no-underline font-medium text-[1.1rem] transition-colors duration-200;
     color: var(--text);
@@ -62,23 +59,19 @@
     content: '';
     @apply absolute bottom-0 left-0 h-[2px] w-0 block;
     background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-    transition: width 0.3s linear; /* Transición lineal */
+    transition: width 0.3s linear; 
   }
   
- /* Asegúrate de que estos estilos estén en tu CSS global */
 .group:hover .group-hover\:w-full {
     width: 100%;
   }
   
-  /* Opcional: Para un cambio de color instantáneo */
   .group:hover .group-hover\:text-accent {
     color: var(--accent);
     transition: none;
   }
   
-  
-  /* Botón */
-  .login-btn {
+    .login-btn {
     @apply px-6 py-2 rounded-md font-medium ml-auto;
     background-color: var(--text);
     color: var(--navbar);
@@ -88,5 +81,19 @@
     background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   }
 
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
+}
+
+html {
+  scroll-behavior: smooth;
+}
   
   
