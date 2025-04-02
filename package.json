@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-navigation-menu": "^1.2.5",
+    "@radix-ui/react-select": "^2.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@tailwindcss/cli": "^4.0.17",
     "@tailwindcss/postcss": "^4.0.17",
     "@tailwindcss/vite": "^4.0.17",
@@ -26,6 +30,7 @@
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.1",
     "react-tsparticles": "^2.12.2",
+    "sonner": "^2.0.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.17",
     "tsparticles-slim": "^2.12.0",

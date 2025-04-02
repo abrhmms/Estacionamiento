@@ -297,8 +297,51 @@ const ParkingManager = () => {
               </div>
 
               <button
-                type="submit"
+                type="button"
                 className="w-full py-3 rounded-lg font-bold gradient-bg2 text-white hover:shadow-primary transition-all"
+                onClick={() => {
+                  const form = document.querySelector('form');
+                  const entryTime = form?.entryTime?.value;
+
+                  if (!entryTime) {
+                    setNotification({
+                      type: 'error',
+                      message: 'Por favor selecciona una hora de entrada'
+                    });
+                    return;
+                  }
+
+                  const newReservation = {
+                    id: Date.now(),
+                    slotId: selectedSlot,
+                    entryTime,
+                    user: user?.username || 'Invitado', // Usar el usuario del contexto
+                    confirmedAt: new Date(),
+                    status: 'active',
+                    vehicle: 'ABC-1234',
+                    paymentMethod: 'Pendiente',
+                    notes: '',
+                    estimatedTime: estimatedTime
+                  };
+
+                  // Actualizar estado local
+                  const updatedReservations = [...reservations, newReservation];
+                  setReservations(updatedReservations);
+
+                  // Guardar en localStorage
+                  localStorage.setItem('parkingReservations', JSON.stringify(updatedReservations));
+
+                  // Mostrar notificación
+                  setNotification({
+                    type: 'success',
+                    message: `¡Reserva confirmada para el Espacio #${selectedSlot}!`
+                  });
+
+                  // Redirigir después de 500ms (para mejor UX)
+                  setTimeout(() => {
+                    navigate('/mis-reservas');
+                  }, 500);
+                }}
               >
                 CONFIRMAR RESERVA
               </button>

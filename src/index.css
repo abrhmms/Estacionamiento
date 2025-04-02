@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-primary: "Poppins", "sans-serif";
@@ -24,15 +27,15 @@
   .gradient-bg {
     background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   }
-  
+
   .gradient-bg2 {
     background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   }
-  
+
   .shadow-primary {
     box-shadow: 0 10px 15px -3px rgba(23, 67, 227, 0.5);
   }
-  
+
   .hover\:shadow-primary:hover {
     box-shadow: 0 10px 20px -3px rgba(23, 67, 227, 0.8);
   }
@@ -41,36 +44,36 @@
     @apply fixed w-full top-0 z-20 p-4 border-b border-gray-800;
     background-color: var(--navbar);
   }
-  
+
   .nav-container {
     @apply max-w-screen-xl mx-auto flex items-center;
   }
-  
+
   .nav-link {
     @apply relative px-4 py-2 no-underline font-medium text-[1.1rem] transition-colors duration-200;
     color: var(--text);
   }
-  
+
   .nav-link:hover {
     color: var(--accent);
   }
-  
+
   .nav-link::after {
     content: '';
     @apply absolute bottom-0 left-0 h-[2px] w-0 block;
     background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
     transition: width 0.3s linear; 
   }
-  
+
 .group:hover .group-hover\:w-full {
     width: 100%;
   }
-  
+
   .group:hover .group-hover\:text-accent {
     color: var(--accent);
     transition: none;
   }
-  
+
     .login-btn {
     @apply px-6 py-2 rounded-md font-medium ml-auto;
     background-color: var(--text);
@@ -95,5 +98,10 @@
 html {
   scroll-behavior: smooth;
 }
-  
+
+.table-container {
+  scrollbar-gutter: stable;
+}
+
+
   

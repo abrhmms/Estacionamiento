@@ -25,32 +25,92 @@ export default function LoginForm({ className, ...props }) {
     try {
       // 1. Iniciar sesión con Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      
+
       // 2. Obtener el rol desde Firestore
       const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
       const userRole = userDoc.data()?.role || "user";
-
       // 3. Redirigir según el rol
       if (userRole === "admin") {
-        navigate("/admin-dashboard");
+        navigate("/admin");
       } else {
-        navigate("/user-dashboard");
+        navigate("/");
       }
 
     } catch (error) {
-      setError(error.message);
-      console.error("Error al iniciar sesión:", error);
+      let errorMessage = "Error desconocido";
+
+      switch (error.code) {
+        case "auth/invalid-email":
+          errorMessage = "El formato del email es inválido";
+          break;
+        case "auth/user-not-found":
+        case "auth/wrong-password":
+          errorMessage = "Email o contraseña incorrectos";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Demasiados intentos. Cuenta temporalmente bloqueada";
+          break;
+        default:
+          errorMessage = error.message;
+      }
+
+      setError(
+        <div className="animate-fade-in  bg-[#1a1a2e]/80 backdrop-blur-md border-b border-white/10 border-l-4 border-[var(--color-accent)] p-4 mb-4 rounded-lg backdrop-blur-sm">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-[var(--color-accent)] mr-3 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div className="ml-3 ">
+              <h3 className="text-sm font-medium text-[var(--color-primary)]">
+                Error al iniciar sesión
+              </h3>
+              <div className="mt-1 text-sm text-[var(--color-text)] opacity-90">
+                {errorMessage}
+              </div>
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={() => setError("")}
+                  className="text-xs text-[var(--color-accent)] hover:text-[var(--color-primary)] transition-colors duration-200"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      console.error("Error de autenticación:", {
+        code: error.code,
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
+
     } finally {
       setLoading(false);
     }
   };
 
   return (
+
     <div className={cn("relative min-h-screen bg-[var(--color-bg)] overflow-hidden", className)} {...props}>
       <div className="h-screen overflow-y-auto scrollbar-hidden pt-32 pb-8 px-4">
         <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
           <div className="w-full max-w-md rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-glass)] p-8 shadow-lg backdrop-blur-sm">
-            
+
             <form onSubmit={handleLogin} className="space-y-6">
               {/* Logo y título */}
               <div className="flex flex-col items-center space-y-4 text-center">
@@ -61,7 +121,7 @@ export default function LoginForm({ className, ...props }) {
                   <span className="sr-only">SmartPark</span>
                 </a>
                 <h1 className="text-2xl font-bold text-[var(--color-text)]">Iniciar Sesión</h1>
-                <NavLink to="/register" className="text-sm text-[var(--color-text)] opacity-80">
+                <NavLink to="/register-form" className="text-sm text-[var(--color-text)] opacity-80">
                   ¿No tienes cuenta?{' '}
                   <span className="text-[var(--color-accent)] underline underline-offset-4 hover:text-[var(--color-primary)] transition-colors">
                     Regístrate
@@ -72,7 +132,7 @@ export default function LoginForm({ className, ...props }) {
               {/* Campos del formulario */}
               <div className="space-y-4">
                 {error && (
-                  <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">
+                  <div className="fixed w-full top-0 bg-[#1a1a2e]/80 border-b border-white/10 px-6 py-4 md:px-20 md:py-6">
                     {error}
                   </div>
                 )}
@@ -106,7 +166,7 @@ export default function LoginForm({ className, ...props }) {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full gradient-bg hover:gradient-bg2"
+                  className="gradient-bg hover:gradient-bg2 inline-block px-6 py-2 md:px-8 md:py-2 rounded-full text-white font-semibold tracking-wider shadow-lg shadow-[var(--color-primary)]/50 relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px] hover:shadow-[var(--color-primary)]/80 z-[1] group w-full"
                 >
                   {loading ? "Cargando..." : "Iniciar Sesión"}
                 </Button>
@@ -124,8 +184,8 @@ export default function LoginForm({ className, ...props }) {
                     Recuérdame
                   </Label>
                 </div>
-                <NavLink 
-                  to="/forgot-password" 
+                <NavLink
+                  to="/forgot-password"
                   className="text-sm text-[var(--color-accent)] hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
@@ -146,3 +206,15 @@ export default function LoginForm({ className, ...props }) {
     </div>
   );
 }
+
+
+
+<div className="relative min-h-screen bg-[var(--color-bg)]" style={{ paddingTop: '80px' }}>
+  <div className="h-full overflow-y-auto pt-8 pb-8 px-4">
+    <div className="flex items-center justify-center min-h-[calc(100vh-80px-4rem)]">
+      
+    </div>
+  </div>
+</div>
+
+
